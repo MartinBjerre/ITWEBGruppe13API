@@ -1,0 +1,44 @@
+extends layout
+
+block content
+    .row.page-header
+        .col-lg-12
+            h1 Exercises
+            .row
+            .col-xs-12.col-md-6
+                form.form-horizontal(action='/user/'+ userId +'/workout/'+ workoutId +'/exercise/CreateExercise', method="post", role="form")
+                    .form-group
+                    table
+                        tr
+                            th Exercise
+                            th Description
+                            th Set
+                            th Reps
+                        tr
+                            td
+                                input#Exercise.form-control(name="Exercise")
+                            td
+                                input#Description.form-control(name="Description")
+                            td
+                                input#Sets.form-control(name="Sets")
+                            td
+                                input#Repstime.form-control(name="Repstime")
+                            td
+                                input(type="submit" value="add")
+                    table
+                        tr
+                            th Exercise
+                            th Description
+                            th Set
+                            th Reps
+                        for value in exercise
+                            tr
+                                td= value.exercise
+                                td= value.description
+                                td= value.sets
+                                td= value.repstime
+                                td
+                                    div.btn-group.btn-sm
+                                        a.btn.btn-danger.btn-sm(href="/user/"+ userId +"/workout/" + workoutId + "/exercise/" + value._id + "/remove" )= 'remove'
+
+

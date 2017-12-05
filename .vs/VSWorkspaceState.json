@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\app_api",
+    "\\app_api\\config",
+    "\\app_api\\controllers",
+    "\\app_api\\modules",
+    "\\app_api\\routes"
+  ],
+  "SelectedNode": "\\app_api\\controllers\\authentication.js",
+  "PreviewInSolutionExplorer": false
+}

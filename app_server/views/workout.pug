@@ -1,0 +1,34 @@
+extends layout
+
+block content
+    .row.page-header
+        .col-lg-12
+            h1 Workout
+            .row
+            .col-ex-12.col-md-6
+                form.from-line(method="post", action ='/user/'+ userId +'/workout/CreateWorkout')
+                    table
+                        tr
+                            th Name
+                            th Discription
+                        tr
+                            td
+                                input#Name.from-control(name="WName")
+                            td
+                                input#discription.from-control(name="WDescription")
+                        tr
+                            td
+                                input(type="submit" value="add")
+                        table
+                            tr
+                                th Name
+                                th Discription
+
+                            for value in workout
+                                tr
+                                    td= value.name
+                                    td=value.description
+                                    td
+                                        div.btn-group.btn-sm
+                                            a.btn.btn-primary.btn-sm(href='/user/' + userId + '/workout/' + value._id + '/exercise' )= 'Exercises'
+

@@ -1,0 +1,29 @@
+extends layout
+
+block content
+    .row.page-header
+        .col-lg-12
+            h1 User
+            .row
+            .col-ex-12.col-md-6
+                form.from-line(method="post", action ='/user/CreateUser')
+                    table
+                        tr
+                            th Name
+                        tr
+                            td
+                                input#Name.from-control(name="UserName")
+                        tr
+                            td
+                                input(type="submit" value="add")
+                        table
+                            tr
+                                th Name
+
+                            for value in user
+                                tr
+                                    td= value.name
+                                    td
+                                        div.btn-group.btn-sm
+                                            a.btn.btn-primary.btn-sm(href='/user/' + value._id + '/workout' )= 'workout'
+

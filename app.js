@@ -28,7 +28,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use('/api', function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:4200', 'https://dashboard.heroku.com/apps/gr13webangular:80');
+    res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     next();
 });

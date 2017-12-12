@@ -1,16 +1,15 @@
 const mongoose = require('mongoose');
-const User = mongoose.model('user');
-const Workout = mongoose.model('workout');
+const userdb = require('../../app_api/modules/user');
 
 module.exports.CreateWorkout = function (req,res) {
-    Workout.create({
+    userdb.WorkoutSchema.create({
             name: req.body.WName,
             description: req.body.WDescription },
         (err, workout) => {
             if (err){
                 res.render('error');
             } else {
-                User.findByIdAndUpdate(
+                userdb.UserSchema.findByIdAndUpdate(
                     req.params.userId,
                     {$push: {workout: workout}},
                     {new: true},
@@ -29,7 +28,7 @@ module.exports.CreateWorkout = function (req,res) {
 
 
 module.exports.ShowAll = function (req,res) {
-    User.findById(req.params.userId)  //her er der en fejl ved ikke hvad.
+    userdb.UserSchema.findById(req.params.userId)  //her er der en fejl ved ikke hvad.
         .populate('workout')
         .exec((err, User) => {
             if('error',err ){
@@ -37,7 +36,7 @@ module.exports.ShowAll = function (req,res) {
             }
             else {
                 if (User != null) {
-                    res.render('workout', {title: 'Workout', workout: User.workout, userId: req.params.userId});
+                    res.render('workout', {title: 'Workout', workout: userdb.WorkoutSchema.workout, userId: req.params.userId});
                 } else {
                     res.render('error', {message: 'User not found'});
                 }
@@ -46,11 +45,3 @@ module.exports.ShowAll = function (req,res) {
         });
 };
 
-
-module.exports.remove= function(req, res){
-    Workout.findByIdAndRemove(
-        req.params.id,
-        (err, workout) => {
-            res.redirect('workout');
-        });
-};

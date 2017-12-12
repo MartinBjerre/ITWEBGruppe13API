@@ -3,32 +3,64 @@ var crypto = require('crypto');
 var jwt = require('jsonwebtoken');
 var Schema = mongoose.Schema;
 
-const userSH = Schema({
+var ExerciseSH = Schema({
+    ExerciseName: {
+        type: String
+    },
+    ExerciseDescription: {
+        type: String
+    },
+    ExerciseSets: {
+        type: Number
+    },
+    ExerciseRepstime: {
+        type: Number
+    }
+});
+const exerciseSH = mongoose.model('exerciseSH',ExerciseSH);
+
+var WorkoutSH = Schema({
+    WorkoutName: {
+        type: String
+    },
+    WorkoutDescription:{
+        type: String
+    },
+    exercise: {
+        type: [ExerciseSH]
+    }
+});
+const workoutSH = mongoose.model('workoutSH',WorkoutSH);
+
+var UserSH = Schema({
     name: {
-      type: String,
-      required: true,
+        type: String,
+        required: true,
         unique: true
     },
-    workout: [{ type: Schema.Types.ObjectId, ref: 'workout'}],
+    workout: {
+        type: [WorkoutSH]
+    },
     hash: String,
     salt: String
 });
+var userSH = mongoose.model('userSH', UserSH);
 
-userSH.methods.setPassword = function (password) {
+UserSH.methods.setPassword = function (password) {
+    console.log("password");
   this.salt = crypto.randomBytes(16).toString('hex');
-  this.hash = crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha512').toString('hex');
+  this.hash = crypto.pbkdf2Sync(password, this.salt, 10000, 64).toString('hex');
 };
 
-userSH.methods.validPassword = function (password) {
-  var hash = crypto.pbkdf2Sync(password, this.salt, 10000, 64, 'sha512').toString('hex');
+UserSH.methods.validPassword = function (password) {
+  var hash = crypto.pbkdf2Sync(password, this.salt, 10000, 64).toString('hex');
   return this.hash === hash;
 };
 
 
-userSH.methods.generateJwt = function () {
+UserSH.methods.generateJwt = function () {
   var expiry = new Date();
   expiry.setDate(expiry.getDate() + 7);
-
   return jwt.sign({
     _id: this._id,
     name: this.name,
@@ -36,4 +68,8 @@ userSH.methods.generateJwt = function () {
   }, process.env.JWT_SECRET); // DO NOT KEEP YOUR SECRET IN THE CODE!
 };
 
-const user = mongoose.model('user', userSH);
+module.exports = {
+    UserSchema: userSH,
+    WorkoutSchema: workoutSH,
+    ExercsieSchema: exerciseSH
+};

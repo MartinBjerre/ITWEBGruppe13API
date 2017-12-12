@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-const Workout = mongoose.model('workout');
-const Exercise = mongoose.model('exercise');
+var userdb = require('../modules/user');
 
 const _buildExercise = function(req, res, results) {
     let exercise = [];
@@ -17,7 +16,7 @@ const _buildExercise = function(req, res, results) {
 };
 
 module.exports.CreateExercise = function(req, res) {
-    Exercise.create(
+    userdb.ExercsieSchema.create(
         {
             ExerciseName: req.body.ExerciseName,
             ExerciseDescription: req.body.ExerciseDescription,
@@ -25,7 +24,7 @@ module.exports.CreateExercise = function(req, res) {
             ExerciseRepstime: req.body.ExerciseRepstime
         },
         (err, exer) => {
-            Workout.findByIdAndUpdate(
+            userdb.WorkoutSchema.findByIdAndUpdate(
                 req.params.workoutId,
                 {$push: {exercise: exer}},
                 {new: true},
@@ -35,14 +34,19 @@ module.exports.CreateExercise = function(req, res) {
                         sendJsonResponse(res,404,{"error" :"Exercise not found"});
                     }
                     else {
-                        sendJsonResponse(res, 200, Workout.exercise);
+                        if (Workout != null) {
+                            sendJsonResponse(res, 200, Workout.exercise);
+                        }
+                        else {
+                            sendJsonResponse(res, 404, {"error": "Exercise not found"});
+                        }
                     }
                 });
         });
 };
 
 module.exports.GetByWorkoutId = function(req, res) {
-    Workout.findById(req.params.workoutId)
+    userdb.WorkoutSchema.findById(req.params.workoutId)
         .populate('exercise')
         .exec((err, Workout)=> {
             if (err){
@@ -50,26 +54,13 @@ module.exports.GetByWorkoutId = function(req, res) {
             } else {
                 if (Workout != null) {
                     //Exercises = _buildExercise(req, res, Workout.exercise);
-                    sendJsonResponse(res, 200, Workout.exercises);
+                    sendJsonResponse(res, 200, Workout.exercise);
                 }
                 else {
                     sendJsonResponse(res, 404, {"error": "Exercise not found"});
                 }
             }
         });
-};
-
-//virker ikke skal lige snakke med poul ejner om dem
-module.exports.remove = function (req, res) {
-    Exercise.findByIdAndRemove(req,params.exeId)
-        .exec(
-            (err, exercise) => {
-                if (err){
-                    res.render('error');
-                } else {
-                    res.redirect('/workout/' + req.params.workoutId + '/exercise/');
-                }
-            });
 };
 
 var sendJsonResponse = function (res, status, content) {

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const User = mongoose.model('user');
+const userdb = require('../modules/user');
 
 const _buildUser = function(req, res, results) {
     let user = [];
@@ -15,20 +15,21 @@ const _buildUser = function(req, res, results) {
 
 module.exports.CreateUser = function (req,res) {
     let users = [];
-    User.create({
-            name: req.body.UserName},
+    userdb.UserSchema.create({
+            name: req.body.UserName,
+            workout: req.body.workout},
         (err, user) => {
             if (err){
                 res.render('error');
             } else {
-                User.find({},
+                userdb.UserSchema.find({},
                     (err, user) => {
                         if (err) {
                             sendJsonResponse(res, 404 ,{"error": "user not found"});
                         }
                         else {
-                            users = _buildUser(req, res, user);
-                            sendJsonResponse(res, 200 , users);
+                            //users = _buildUser(req, res, user);
+                            sendJsonResponse(res, 200 , user);
                         }
                     });
             }
@@ -36,14 +37,14 @@ module.exports.CreateUser = function (req,res) {
 };
 
 module.exports.ShowAllUser = function (req,res) {
-    User.find({})
+    userdb.UserSchema.find({})
         .exec((err, user) => {
             if(err){
                 sendJsonResponse(res, 404 ,{"error": "user not found"});
             }
             else {
-                users = _buildUser(req, res, user);
-                sendJsonResponse(res, 200 ,users);
+                //users = _buildUser(req, res, user);
+                sendJsonResponse(res, 200 ,user);
             }
         });
 };

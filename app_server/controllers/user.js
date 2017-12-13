@@ -1,14 +1,15 @@
 const mongoose = require('mongoose');
-const userdb = require('../../app_api/modules/user');
+const User = mongoose.model('user');
+
 
 module.exports.CreateUser = function (req,res) {
-    userdb.UserSchema.create({
+    User.create({
             name: req.body.UserName},
         (err, user) => {
             if (err){
                 res.render('error');
             } else {
-                userdb.UserSchema.find({},
+                User.find({},
                     (err, user) => {
                         if (err) {
                             res.render('error');
@@ -23,7 +24,7 @@ module.exports.CreateUser = function (req,res) {
 };
 
 module.exports.ShowAllUser = function (req,res) {
-    userdb.UserSchema.find({})
+    User.find({})
         .exec((err, user) => {
             if(err){
                 res.render('error');

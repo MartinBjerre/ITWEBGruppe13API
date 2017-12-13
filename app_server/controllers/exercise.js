@@ -1,11 +1,9 @@
 const mongoose = require('mongoose');
-
-const userdb = require('../../app_api/modules/user');
-
-
+const Workout = mongoose.model('workout');
+const Exercise = mongoose.model('exercise');
 
 module.exports.CreateExercise = function(req, res) {
-    userdb.ExercsieSchema.create(
+    Exercise.create(
         {
             exercise: req.body.Exercise,
             description: req.body.Description,
@@ -13,7 +11,7 @@ module.exports.CreateExercise = function(req, res) {
             repstime: req.body.Repstime
         },
         (err, exer) => {
-            userdb.ExercsieSchema.findByIdAndUpdate(
+            Workout.findByIdAndUpdate(
                 req.params.workoutId,
                 {$push: {exercise: exer}},
                 {new: true},
@@ -29,13 +27,13 @@ module.exports.CreateExercise = function(req, res) {
 };
 
 module.exports.GetByWorkoutId = function(req, res) {
-    userdb.WorkoutSchema.findById(req.params.workoutId)
+    Workout.findById(req.params.workoutId)
         .populate('exercise')
         .exec((err, Workout)=> {
             if (err){
                 res.render('error');
             } else {
-                res.render('exercise', {title: 'Exercise', exercise: db.WorkoutSchema.exercise, workoutId: req.params.workoutId});
+                res.render('exercise', {title: 'Exercise', exercise: Workout.exercise, workoutId: req.params.workoutId});
             }
         });
 };

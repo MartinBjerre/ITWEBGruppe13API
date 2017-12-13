@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-var userdb = require('../modules/user');
+const Workout = mongoose.model('workout');
+const Exercise = mongoose.model('exercise');
 
 const _buildExercise = function(req, res, results) {
     let exercise = [];
@@ -16,7 +17,7 @@ const _buildExercise = function(req, res, results) {
 };
 
 module.exports.CreateExercise = function(req, res) {
-    userdb.ExercsieSchema.create(
+    Exercise.create(
         {
             ExerciseName: req.body.ExerciseName,
             ExerciseDescription: req.body.ExerciseDescription,
@@ -24,7 +25,7 @@ module.exports.CreateExercise = function(req, res) {
             ExerciseRepstime: req.body.ExerciseRepstime
         },
         (err, exer) => {
-            userdb.WorkoutSchema.findByIdAndUpdate(
+            Workout.findByIdAndUpdate(
                 req.params.workoutId,
                 {$push: {exercise: exer}},
                 {new: true},
@@ -34,19 +35,14 @@ module.exports.CreateExercise = function(req, res) {
                         sendJsonResponse(res,404,{"error" :"Exercise not found"});
                     }
                     else {
-                        if (Workout != null) {
-                            sendJsonResponse(res, 200, Workout.exercise);
-                        }
-                        else {
-                            sendJsonResponse(res, 404, {"error": "Exercise not found"});
-                        }
+                        sendJsonResponse(res, 200, Workout.exercise);
                     }
                 });
         });
 };
 
 module.exports.GetByWorkoutId = function(req, res) {
-    userdb.WorkoutSchema.findById(req.params.workoutId)
+    Workout.findById(req.params.workoutId)
         .populate('exercise')
         .exec((err, Workout)=> {
             if (err){
@@ -61,6 +57,19 @@ module.exports.GetByWorkoutId = function(req, res) {
                 }
             }
         });
+};
+
+//virker ikke skal lige snakke med poul ejner om dem
+module.exports.remove = function (req, res) {
+    Exercise.findByIdAndRemove(req,params.exeId)
+        .exec(
+            (err, exercise) => {
+                if (err){
+                    res.render('error');
+                } else {
+                    res.redirect('/workout/' + req.params.workoutId + '/exercise/');
+                }
+            });
 };
 
 var sendJsonResponse = function (res, status, content) {

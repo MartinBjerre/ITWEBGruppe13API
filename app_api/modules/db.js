@@ -5,7 +5,6 @@ if(process.env.NODE_ENV === 'production') {
 }
 
 //Opretter Connection
-mongoose.Promise = global.Promise;
 mongoose.connect(url);
 
 //Monitor connection
@@ -19,4 +18,7 @@ mongoose.connection.on('disconnected', function () {
     console.log('Mongoose disconnected');
 });
 
+
+require('./exercise');
+require('./workout');
 require('./user');

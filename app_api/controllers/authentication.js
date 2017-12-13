@@ -1,7 +1,6 @@
 var passport = require('passport');
 var mongoose = require('mongoose');
-var userdb = require('../modules/user');
-
+var User = mongoose.model('user');
 
 var sendJSONresponse = function (res, status, content) {
   res.status(status);
@@ -9,24 +8,27 @@ var sendJSONresponse = function (res, status, content) {
 };
 
 module.exports.register = function (req, res) {
+  console.log(req.body.name);
   if (!req.body.name || !req.body.password) {
     sendJSONresponse(res, 400, {
       "message": "All fields required"
     });
     return;
   }
-  var user = new userdb.UserSchema();
-
+  console.log(req.body.name);
+  var user = new User();
   user.name = req.body.name;
-  console.log(req.body.password);
+  console.log(req.body.name);
   user.setPassword(req.body.password);
-  user.workout = [];
-  //her er der en fejl poul..
+  console.log(req.body.name);
   user.save(function (err) {
+    console.log(req.body.name);
     var token;
     if (err) {
+      console.log(req.body.name);
       sendJSONresponse(res, 404, err);
     } else {
+        console.log(req.body.name);
       token = user.generateJwt();
       sendJSONresponse(res, 200, {
         "token": token

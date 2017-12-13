@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
-const userdb = require('../modules/user');
+const Workout = mongoose.model('workout');
+const User = mongoose.model('user');
 
 const _buildWorkout = function(req, res, results) {
     let workout = [];
         results.forEach((doc) => {
-            console.log();
             workout.push({
                 _id: doc._id,
                 WorkoutName: doc.WorkoutName,
@@ -16,33 +16,27 @@ const _buildWorkout = function(req, res, results) {
 };
 
 module.exports.CreateWorkout = function (req,res) {
-    let workouts = [];
+    console.log(req.body.WorkoutDescription);
     console.log(req.body.WorkoutName);
-    userdb.WorkoutSchema.create({
+    let workouts = [];
+    Workout.create({
             WorkoutName: req.body.WorkoutName,
             WorkoutDescription: req.body.WorkoutDescription },
-        (err, work) => {
+        (err, workout) => {
             if (err){
                 res.render('error');
             } else {
-                //console.log(Workout.WorkoutName);
-                userdb.UserSchema.findByIdAndUpdate(
+                User.findByIdAndUpdate(
                     req.params.userId,
-                    {$push: {workout: work}},
+                    {$push: {workout: workout}},
                     {new: true},
-                    (err, User) => {
+                    (err, workout) => {
                         if (err) {
                             sendJsonResponse(res, 404, 'error');
                         }
                         else {
-                            if (User != null) {
-                               // workouter = _buildWorkout(req, res, workouts);
-                                console.log("test String");
-                                console.log(User);
-                                sendJsonResponse(res, 200, User);
-                            } else {
-                                sendJsonResponse(res, 404, 'error');
-                            }
+                            //workouts = _buildWorkout(req, res, User.workout);
+                            sendJsonResponse(res, 200, User.workouts);
                         }
                     });
             }
@@ -51,7 +45,7 @@ module.exports.CreateWorkout = function (req,res) {
 
 module.exports.ShowAll = function (req,res) {
     let workouts = [];
-    userdb.WorkoutSchema.findById(req.params.userId)
+    User.findById(req.params.userId)
         .populate('workout')
         .exec((err, User) => {
             if('error',err ){
@@ -61,12 +55,21 @@ module.exports.ShowAll = function (req,res) {
                 if (User != null) {
                     console.log("testString");
                     //workouts = _buildWorkout(req, res, User.workout);
-                    sendJsonResponse(res, 200, User);
+                    sendJsonResponse(res, 200, User.workout);
                 } else {
                     sendJsonResponse(res, 404, 'error');
                 }
 
             }
+        });
+};
+
+// virker ikke endnu...
+module.exports.remove= function(req, res){
+    Workout.findByIdAndRemove(
+        req.params.id,
+        (err, workout) => {
+            res.redirect('workout');
         });
 };
 
